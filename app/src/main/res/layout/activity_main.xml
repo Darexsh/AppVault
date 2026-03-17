@@ -105,36 +105,77 @@
                         android:textColorHint="#B3FFFFFF" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/filter_dropdown_container"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="@string/filter_hint"
-                    app:expandedHintEnabled="false"
-                    app:hintAnimationEnabled="false"
-                    app:boxBackgroundColor="#22FFFFFF"
-                    app:boxCornerRadiusBottomEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp"
-                    app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusTopStart="16dp"
-                    app:boxStrokeColor="#66FFFFFF"
-                    app:hintTextColor="#CCFFFFFF"
-                    app:hintTextAppearance="@style/TextAppearance.AppsInspector.FieldLabel">
+                    android:orientation="horizontal">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/filter_dropdown"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/filter_dropdown_container"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:focusable="false"
-                        android:inputType="none"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_weight="1"
+                        android:hint="@string/filter_hint"
+                        app:expandedHintEnabled="false"
+                        app:hintAnimationEnabled="false"
+                        app:boxBackgroundColor="#22FFFFFF"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeColor="#66FFFFFF"
+                        app:hintTextColor="#CCFFFFFF"
+                        app:hintTextAppearance="@style/TextAppearance.AppsInspector.FieldLabel">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/filter_dropdown"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:saveEnabled="false"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/sort_dropdown_container"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:hint="@string/sort_hint"
+                        app:expandedHintEnabled="false"
+                        app:hintAnimationEnabled="false"
+                        app:boxBackgroundColor="#22FFFFFF"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeColor="#66FFFFFF"
+                        app:hintTextColor="#CCFFFFFF"
+                        app:hintTextAppearance="@style/TextAppearance.AppsInspector.FieldLabel">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/sort_dropdown"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:focusable="false"
+                            android:inputType="none"
+                            android:saveEnabled="false"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
@@ -144,7 +185,7 @@
         android:id="@+id/batch_actions_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
         app:cardBackgroundColor="#0F1628"
         app:cardCornerRadius="16dp"
@@ -157,87 +198,99 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/batch_selection_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#D7E4FF"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <HorizontalScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="4">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/batch_select_all"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:minHeight="34dp"
                         android:minWidth="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/batch_select_all"
                         android:textAllCaps="false"
                         android:textColor="#C8D4EC"
+                        android:textSize="12sp"
                         app:strokeColor="#30405E" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/batch_clear"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:minHeight="34dp"
                         android:minWidth="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/batch_clear"
                         android:textAllCaps="false"
                         android:textColor="#C8D4EC"
+                        android:textSize="12sp"
                         app:strokeColor="#30405E" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/batch_backup"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:minHeight="34dp"
                         android:minWidth="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/batch_backup"
                         android:textAllCaps="false"
                         android:textColor="#C8D4EC"
+                        android:textSize="12sp"
                         app:strokeColor="#30405E" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/batch_uninstall"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:minHeight="34dp"
                         android:minWidth="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="@string/batch_uninstall"
                         android:textAllCaps="false"
                         android:textColor="#FF8E8E"
+                        android:textSize="12sp"
                         app:strokeColor="#AA5A5A" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/batch_done"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="0dp"
-                        android:text="@string/batch_done"
-                        android:textAllCaps="false"
-                        android:textColor="#C8D4EC"
-                        app:strokeColor="#30405E" />
-                </LinearLayout>
-            </HorizontalScrollView>
+            </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

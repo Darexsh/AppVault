@@ -30,18 +30,18 @@
 🚀 About the Project
 ==============
 
-**AppsInspector** is an Android application designed to help you inspect installed apps on your device. It provides a searchable app inventory, user/system filtering, package-level details, backup actions, and quick access to app settings.
+**AppsInspector** is an Android application designed to help you inspect installed apps on your device. It provides a searchable app inventory, user/system filtering, sorting options, package-level details, backup actions, and quick access to app settings.
 
 * * *
 
 ✨ Features
 ----------
 
-* 🔎 **Search & Filter**: Search apps by name/package and filter by **User apps**, **System apps**, or **All apps**.
+* 🔎 **Search, Filter & Sort**: Search apps by name/package, filter by **User apps**, **System apps**, or **All apps**, and sort by **Name**, **Install date**, **Update date**, or **App size**.
 
 * 📋 **App Inventory**: Clean list with app icon, app name, and package name.
 
-* 🧾 **App Details Screen**: Open detailed metadata including version, version code, target SDK, min SDK, first install date, data directory, and source directory.
+* 🧾 **App Details Screen**: Open detailed metadata including version, version code, target SDK, min SDK, first install date, **app size**, data directory, source directory, and requested app permissions.
 
 * ⚙️ **Quick App Actions**: Open system app settings, create APK backup, or uninstall from each app row.
 
@@ -49,9 +49,15 @@
 
 * ✅ **Backup Confirm Dialog**: Friendly confirmation dialog before each backup operation.
 
-* 🧩 **Selection Mode (Batch)**: Long-press an app to enter selection mode, then run **batch backup** or **batch uninstall**.
+* 🧩 **Selection Mode**: Long-press an app to enter selection mode, then run **backup** or **uninstall** for selected apps.
+
+* 🪟 **Selected-App Confirm Dialogs**: Styled confirmation dialogs for selected-app backup/uninstall with selected app names shown.
 
 * 🔄 **Live App List Refresh**: List updates automatically after installs, updates, and removals.
+
+* 🔐 **Permissions Viewer**: Permissions are shown in a readable format with clear status labels (**Allowed** / **Not allowed**).
+
+* 🌐 **Language Switcher**: Change app language from the App Info dialog using **System default**, **English**, or **Deutsch**.
 
 * 🌙 **Dark Mode (Default)**: App uses a dark, no-action-bar UI by default.
 
@@ -102,7 +108,7 @@ Screenshots can be added later in a `Screenshots/` folder and referenced here.
 
     * Open the app to view installed applications.
 
-    * Use search and filter controls in the header.
+    * Use search, filter, and sort controls in the header.
 
 2. **Inspect Details**:
 
@@ -114,15 +120,23 @@ Screenshots can be added later in a `Screenshots/` folder and referenced here.
 
     * Use **App settings**, **Backup**, or **Uninstall**.
 
-4. **Batch Mode**:
+4. **Selection Mode**:
 
     * Long-press an app to enter selection mode.
 
-    * Select multiple apps and run **Backup** or **Uninstall** from the batch bar.
+    * Select multiple apps and run **Backup** or **Uninstall** from the action bar.
+
+    * Review selected app names in the confirmation dialog before continuing.
 
 5. **Grant File Access for Backups**:
 
     * If needed, accept the in-app prompt and allow file access in Android settings.
+
+6. **Change App Language**:
+
+    * Open the App Info dialog (`i` button in header).
+
+    * Tap **Language** and choose **English** or **Deutsch**.
 
 
 * * *
@@ -148,9 +162,17 @@ Screenshots can be added later in a `Screenshots/` folder and referenced here.
 
 * 🔄 Uses `BroadcastReceiver` package events (`ADDED/REMOVED/CHANGED/REPLACED`) for live list refresh.
 
-* 💾 APK backup copies from `applicationInfo.sourceDir` to external storage (`App_Backups`).
+* 💾 APK backup copies from installed APK source files to external storage (`App_Backups`), including split APK parts when available.
+
+* ⚠️ Split-APK restore note: split backups may require split-aware installation; tapping a single APK file in a file manager may not install split apps.
 
 * 🧭 Navigation includes a dedicated app-details activity.
+
+* 📏 Details page app size is shown as installed APK footprint (base + split APK files when present).
+
+* 🔐 Permission details are read from package metadata and displayed as friendly names with grant state.
+
+* 🌐 Language behavior: **System default** is the default mode. If the system language is not supported, the app falls back to English.
 
 * 🎨 UI built with Material Components and custom dialogs/themes.
 

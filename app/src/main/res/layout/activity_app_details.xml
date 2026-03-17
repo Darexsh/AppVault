@@ -180,6 +180,21 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="@string/app_size_total"
+                    android:textColor="#95A9CE"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/detail_app_size_total_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#EAF1FF"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="@string/data_directory"
                     android:textColor="#95A9CE"
                     android:textSize="12sp" />
@@ -201,6 +216,21 @@
 
                 <TextView
                     android:id="@+id/detail_source_dir_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#EAF1FF"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/permissions"
+                    android:textColor="#95A9CE"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/detail_permissions_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="#EAF1FF"

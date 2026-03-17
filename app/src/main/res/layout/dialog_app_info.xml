@@ -73,6 +73,23 @@
             android:background="?attr/colorOnBackground" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_change_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/app_info_change_language"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:backgroundTint="@color/header_tone_primary"
+            app:cornerRadius="12dp"
+            app:icon="@android:drawable/ic_menu_manage"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconSize="18dp"
+            app:iconTint="@null" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_open_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

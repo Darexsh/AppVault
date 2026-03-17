@@ -3,6 +3,7 @@ package com.darexsh.appsinspector;
 import android.content.Intent;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -41,7 +42,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
+import androidx.core.os.LocaleListCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -61,18 +64,14 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "AppsInspector";
-    // TODO roadmap:
-    // 1) Sort options (name, install date, update date, app size)
-    // 2) Export app list (CSV/TXT with core metadata)
-    // 3) Backup manager screen (list/open/share/delete backups)
-    // 4) App size breakdown (APK/data/cache where available)
-    // 5) Permissions viewer in details page
-    // 6) Favorites / pinning important apps
-    // 7) "What's new" section in app info
 
     private static final int FILTER_ALL = 0;
     private static final int FILTER_USER = 1;
     private static final int FILTER_SYSTEM = 2;
+    private static final int SORT_NAME = 0;
+    private static final int SORT_INSTALL_DATE = 1;
+    private static final int SORT_UPDATE_DATE = 2;
+    private static final int SORT_APP_SIZE = 3;
 
     private final List<AppRow> allAppRows = new ArrayList<>();
     private final List<AppRow> filteredAppRows = new ArrayList<>();
@@ -82,12 +81,13 @@ public class MainActivity extends AppCompatActivity {
     private AppListAdapter appAdapter;
     private String currentSearchQuery = "";
     private int currentFilter = FILTER_USER;
-    private boolean refreshAppsOnResume = false;
+    private int currentSort = SORT_NAME;
     private boolean selectionMode = false;
     private boolean batchUninstallInProgress = false;
 
     private TextInputEditText searchInput;
     private AutoCompleteTextView filterDropdown;
+    private AutoCompleteTextView sortDropdown;
     private TextView headerSubtitle;
     private View batchActionsCard;
     private TextView batchSelectionCount;
@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton batchClearButton;
     private MaterialButton batchBackupButton;
     private MaterialButton batchUninstallButton;
-    private MaterialButton batchDoneButton;
     private boolean packageReceiverRegistered = false;
 
     private final BroadcastReceiver packageChangeReceiver = new BroadcastReceiver() {
@@ -128,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         headerSubtitle = findViewById(R.id.header_subtitle);
         searchInput = findViewById(R.id.search_input);
         filterDropdown = findViewById(R.id.filter_dropdown);
+        sortDropdown = findViewById(R.id.sort_dropdown);
         TextView appInfoButton = findViewById(R.id.btn_app_info);
         batchActionsCard = findViewById(R.id.batch_actions_card);
         batchSelectionCount = findViewById(R.id.batch_selection_count);
@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
         batchClearButton = findViewById(R.id.batch_clear);
         batchBackupButton = findViewById(R.id.batch_backup);
         batchUninstallButton = findViewById(R.id.batch_uninstall);
-        batchDoneButton = findViewById(R.id.batch_done);
 
         appAdapter = new AppListAdapter(
                 this,
@@ -145,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupSearchInput();
         setupFilterDropdown();
+        setupSortDropdown();
         setupBatchActions();
         appInfoButton.setOnClickListener(v -> showAppInfoDialog());
 
@@ -159,10 +159,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (refreshAppsOnResume) {
-            refreshAppsOnResume = false;
-            reloadInstalledApps();
-        }
+        refreshFilterAndSortSelectionLabels();
+        reloadInstalledApps();
         if (batchUninstallInProgress && !pendingBatchUninstallPackages.isEmpty()) {
             launchNextBatchUninstall();
         }
@@ -242,11 +240,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupFilterDropdown() {
-        String[] options = {
-                getString(R.string.filter_all),
-                getString(R.string.filter_user),
-                getString(R.string.filter_system)
-        };
+        String[] options = getFilterOptions();
 
         ArrayAdapter<String> filterAdapter = new ArrayAdapter<>(
                 this,
@@ -264,6 +258,55 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupSortDropdown() {
+        String[] options = getSortOptions();
+
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(
+                this,
+                R.layout.item_filter_dropdown,
+                options
+        );
+        sortAdapter.setDropDownViewResource(R.layout.item_filter_dropdown);
+        sortDropdown.setAdapter(sortAdapter);
+        sortDropdown.setDropDownBackgroundResource(R.drawable.bg_dropdown_menu);
+        sortDropdown.setText(options[SORT_NAME], false);
+        sortDropdown.setOnClickListener(v -> sortDropdown.showDropDown());
+        sortDropdown.setOnItemClickListener((parent, view, position, id) -> {
+            currentSort = position;
+            applyFilters();
+        });
+    }
+
+    private void refreshFilterAndSortSelectionLabels() {
+        if (filterDropdown != null) {
+            String[] filterOptions = getFilterOptions();
+            int filterIndex = Math.max(0, Math.min(currentFilter, filterOptions.length - 1));
+            filterDropdown.setText(filterOptions[filterIndex], false);
+        }
+        if (sortDropdown != null) {
+            String[] sortOptions = getSortOptions();
+            int sortIndex = Math.max(0, Math.min(currentSort, sortOptions.length - 1));
+            sortDropdown.setText(sortOptions[sortIndex], false);
+        }
+    }
+
+    private String[] getFilterOptions() {
+        return new String[]{
+                getString(R.string.filter_all),
+                getString(R.string.filter_user),
+                getString(R.string.filter_system)
+        };
+    }
+
+    private String[] getSortOptions() {
+        return new String[]{
+                getString(R.string.sort_name),
+                getString(R.string.sort_install_date),
+                getString(R.string.sort_update_date),
+                getString(R.string.sort_app_size)
+        };
+    }
+
     private void setupBatchActions() {
         batchSelectAllButton.setOnClickListener(v -> {
             selectedPackages.clear();
@@ -276,9 +319,8 @@ public class MainActivity extends AppCompatActivity {
         batchClearButton.setOnClickListener(v -> {
             exitSelectionMode();
         });
-        batchBackupButton.setOnClickListener(v -> backupSelectedApps());
+        batchBackupButton.setOnClickListener(v -> confirmBatchBackup());
         batchUninstallButton.setOnClickListener(v -> confirmBatchUninstall());
-        batchDoneButton.setOnClickListener(v -> exitSelectionMode());
         updateBatchActionsUi();
     }
 
@@ -307,11 +349,38 @@ public class MainActivity extends AppCompatActivity {
         if (batchActionsCard == null) {
             return;
         }
-        if (!selectionMode || selectedPackages.isEmpty()) {
-            batchActionsCard.setVisibility(View.GONE);
+        boolean shouldShow = selectionMode && !selectedPackages.isEmpty();
+        boolean isVisible = batchActionsCard.getVisibility() == View.VISIBLE;
+
+        batchActionsCard.animate().cancel();
+
+        if (!shouldShow) {
+            if (isVisible) {
+                batchActionsCard.animate()
+                        .alpha(0f)
+                        .translationY(16f)
+                        .setDuration(140)
+                        .withEndAction(() -> {
+                            batchActionsCard.setVisibility(View.GONE);
+                            batchActionsCard.setAlpha(1f);
+                            batchActionsCard.setTranslationY(0f);
+                        })
+                        .start();
+            } else {
+                batchActionsCard.setVisibility(View.GONE);
+            }
             return;
         }
-        batchActionsCard.setVisibility(View.VISIBLE);
+        if (!isVisible) {
+            batchActionsCard.setAlpha(0f);
+            batchActionsCard.setTranslationY(16f);
+            batchActionsCard.setVisibility(View.VISIBLE);
+            batchActionsCard.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(180)
+                    .start();
+        }
         batchSelectionCount.setText(getString(R.string.batch_selected_count, selectedPackages.size()));
         boolean hasSelection = !selectedPackages.isEmpty();
         batchClearButton.setEnabled(hasSelection);
@@ -338,9 +407,45 @@ public class MainActivity extends AppCompatActivity {
 
             filteredAppRows.add(row);
         }
+        sortFilteredRows();
 
         appAdapter.notifyDataSetChanged();
         updateHeaderSubtitle();
+    }
+
+    private void sortFilteredRows() {
+        Comparator<AppRow> comparator;
+        if (currentSort == SORT_INSTALL_DATE) {
+            comparator = (left, right) -> Long.compare(
+                    right.packageInfo.firstInstallTime,
+                    left.packageInfo.firstInstallTime
+            );
+        } else if (currentSort == SORT_UPDATE_DATE) {
+            comparator = (left, right) -> Long.compare(
+                    right.packageInfo.lastUpdateTime,
+                    left.packageInfo.lastUpdateTime
+            );
+        } else if (currentSort == SORT_APP_SIZE) {
+            comparator = (left, right) -> Long.compare(
+                    getSourceApkSize(right),
+                    getSourceApkSize(left)
+            );
+        } else {
+            comparator = Comparator.comparing(row -> row.appName.toLowerCase(Locale.US));
+        }
+        Collections.sort(filteredAppRows, comparator);
+    }
+
+    private long getSourceApkSize(AppRow row) {
+        String sourceDir = row.packageInfo.applicationInfo.sourceDir;
+        if (sourceDir == null) {
+            return 0L;
+        }
+        File apkFile = new File(sourceDir);
+        if (!apkFile.exists()) {
+            return 0L;
+        }
+        return apkFile.length();
     }
 
     private void reloadInstalledApps() {
@@ -512,13 +617,11 @@ public class MainActivity extends AppCompatActivity {
         try {
             if (uninstallIntent.resolveActivity(getPackageManager()) != null) {
                 Log.d(TAG, "Launching ACTION_UNINSTALL_PACKAGE for " + packageName);
-                refreshAppsOnResume = true;
                 startActivity(uninstallIntent);
                 return;
             }
             if (legacyDeleteIntent.resolveActivity(getPackageManager()) != null) {
                 Log.d(TAG, "Launching ACTION_DELETE for " + packageName);
-                refreshAppsOnResume = true;
                 startActivity(legacyDeleteIntent);
                 return;
             }
@@ -531,6 +634,66 @@ public class MainActivity extends AppCompatActivity {
         Log.w(TAG, "No uninstall activity available, opening settings for " + packageName);
         Toast.makeText(this, R.string.uninstall_not_supported, Toast.LENGTH_SHORT).show();
         openSystemAppSettings(packageName);
+    }
+
+    private void confirmUninstall(AppRow row) {
+        showActionConfirmDialog(
+                row.appIcon,
+                getString(R.string.uninstall_confirm_title),
+                row.appName,
+                getString(R.string.uninstall_confirm_message, row.appName),
+                getString(R.string.uninstall_confirm_yes),
+                true,
+                () -> uninstallApp(row.packageInfo.packageName)
+        );
+    }
+
+    private void showActionConfirmDialog(
+            Drawable icon,
+            String title,
+            String subtitle,
+            String message,
+            String confirmButtonText,
+            boolean destructiveAction,
+            Runnable onConfirm
+    ) {
+        View content = getLayoutInflater().inflate(R.layout.dialog_uninstall_confirm, null);
+        ImageView iconView = content.findViewById(R.id.uninstall_app_icon);
+        TextView titleView = content.findViewById(R.id.uninstall_title);
+        TextView subtitleView = content.findViewById(R.id.uninstall_subtitle);
+        TextView messageView = content.findViewById(R.id.uninstall_message);
+        MaterialButton noButton = content.findViewById(R.id.uninstall_no_button);
+        MaterialButton yesButton = content.findViewById(R.id.uninstall_yes_button);
+
+        iconView.setImageDrawable(icon);
+        titleView.setText(title);
+        subtitleView.setText(subtitle);
+        messageView.setText(message);
+        yesButton.setText(confirmButtonText);
+        if (destructiveAction) {
+            yesButton.setTextColor(Color.parseColor("#FFD3D3"));
+            yesButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5A2323")));
+            yesButton.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A55A5A")));
+        } else {
+            yesButton.setTextColor(Color.parseColor("#CFE0FF"));
+            yesButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2F4D73")));
+            yesButton.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#5C789E")));
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(content)
+                .create();
+
+        noButton.setOnClickListener(v -> dialog.dismiss());
+        yesButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            onConfirm.run();
+        });
+
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
     }
 
     private void confirmBackup(AppRow row) {
@@ -565,29 +728,32 @@ public class MainActivity extends AppCompatActivity {
         if (!ensureBackupStorageAccess()) {
             return;
         }
-        File apkCopy = copyApkToBackupFolder(row);
-        if (apkCopy == null) {
+        BackupResult backupResult = copyApkToBackupFolder(row);
+        if (backupResult == null || backupResult.savedFiles.isEmpty()) {
             Toast.makeText(this, R.string.backup_failed, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        MediaScannerConnection.scanFile(
-                this,
-                new String[]{apkCopy.getAbsolutePath()},
-                new String[]{"application/vnd.android.package-archive"},
-                null
-        );
-        Toast.makeText(this, getString(R.string.backup_saved, apkCopy.getName()), Toast.LENGTH_LONG).show();
+        List<String> paths = new ArrayList<>();
+        for (File savedFile : backupResult.savedFiles) {
+            paths.add(savedFile.getAbsolutePath());
+        }
+        MediaScannerConnection.scanFile(this, paths.toArray(new String[0]), null, null);
+
+        if (backupResult.containsSplitApks) {
+            Toast.makeText(
+                    this,
+                    getString(R.string.backup_saved_split, row.appName, backupResult.savedFiles.size()),
+                    Toast.LENGTH_LONG
+            ).show();
+        } else {
+            Toast.makeText(this, getString(R.string.backup_saved, backupResult.savedFiles.get(0).getName()), Toast.LENGTH_LONG).show();
+        }
     }
 
-    private File copyApkToBackupFolder(AppRow row) {
+    private BackupResult copyApkToBackupFolder(AppRow row) {
         String sourceDir = row.packageInfo.applicationInfo.sourceDir;
         if (sourceDir == null) {
-            return null;
-        }
-
-        File sourceFile = new File(sourceDir);
-        if (!sourceFile.exists()) {
             return null;
         }
 
@@ -600,18 +766,73 @@ public class MainActivity extends AppCompatActivity {
         if (sanitizedName.isEmpty()) {
             sanitizedName = row.packageInfo.packageName;
         }
-        String fileName = sanitizedName + " (" + row.packageInfo.packageName + ").apk";
-        File apkCopy = new File(backupRoot, fileName);
+
+        String[] splitSourceDirs = row.packageInfo.applicationInfo.splitSourceDirs;
+        boolean hasSplits = splitSourceDirs != null && splitSourceDirs.length > 0;
+        List<File> savedFiles = new ArrayList<>();
+
+        if (!hasSplits) {
+            File sourceFile = new File(sourceDir);
+            if (!sourceFile.exists()) {
+                return null;
+            }
+            String fileName = sanitizedName + " (" + row.packageInfo.packageName + ").apk";
+            File apkCopy = new File(backupRoot, fileName);
+            if (!copyFile(sourceFile, apkCopy)) {
+                return null;
+            }
+            savedFiles.add(apkCopy);
+            return new BackupResult(savedFiles, false);
+        }
+
+        File appBackupFolder = new File(backupRoot, sanitizedName + " (" + row.packageInfo.packageName + ")");
+        if (!appBackupFolder.exists() && !appBackupFolder.mkdirs()) {
+            return null;
+        }
+
+        File baseSource = new File(sourceDir);
+        if (!baseSource.exists()) {
+            return null;
+        }
+        File baseTarget = new File(appBackupFolder, "base.apk");
+        if (!copyFile(baseSource, baseTarget)) {
+            return null;
+        }
+        savedFiles.add(baseTarget);
+
+        for (String splitPath : splitSourceDirs) {
+            if (splitPath == null || splitPath.trim().isEmpty()) {
+                continue;
+            }
+            File splitSource = new File(splitPath);
+            if (!splitSource.exists()) {
+                continue;
+            }
+            String splitName = splitSource.getName();
+            if (!splitName.toLowerCase(Locale.US).endsWith(".apk")) {
+                splitName = splitName + ".apk";
+            }
+            File splitTarget = new File(appBackupFolder, splitName);
+            if (!copyFile(splitSource, splitTarget)) {
+                return null;
+            }
+            savedFiles.add(splitTarget);
+        }
+
+        return new BackupResult(savedFiles, true);
+    }
+
+    private boolean copyFile(File sourceFile, File targetFile) {
         try (FileInputStream in = new FileInputStream(sourceFile);
-             FileOutputStream out = new FileOutputStream(apkCopy)) {
+             FileOutputStream out = new FileOutputStream(targetFile)) {
             byte[] buffer = new byte[8192];
             int count;
             while ((count = in.read(buffer)) != -1) {
                 out.write(buffer, 0, count);
             }
-            return apkCopy;
+            return true;
         } catch (IOException e) {
-            return null;
+            return false;
         }
     }
 
@@ -625,38 +846,79 @@ public class MainActivity extends AppCompatActivity {
 
         int success = 0;
         int failed = 0;
+        int splitBackups = 0;
         for (String packageName : new ArrayList<>(selectedPackages)) {
             AppRow row = findAppRow(packageName);
             if (row == null) {
                 failed++;
                 continue;
             }
-            File savedFile = copyApkToBackupFolder(row);
-            if (savedFile == null) {
+            BackupResult backupResult = copyApkToBackupFolder(row);
+            if (backupResult == null || backupResult.savedFiles.isEmpty()) {
                 failed++;
                 continue;
             }
             success++;
-            MediaScannerConnection.scanFile(
-                    this,
-                    new String[]{savedFile.getAbsolutePath()},
-                    new String[]{"application/vnd.android.package-archive"},
-                    null
-            );
+            if (backupResult.containsSplitApks) {
+                splitBackups++;
+            }
+            List<String> paths = new ArrayList<>();
+            for (File savedFile : backupResult.savedFiles) {
+                paths.add(savedFile.getAbsolutePath());
+            }
+            MediaScannerConnection.scanFile(this, paths.toArray(new String[0]), null, null);
         }
         Toast.makeText(this, getString(R.string.batch_backup_result, success, failed), Toast.LENGTH_LONG).show();
+        if (splitBackups > 0) {
+            Toast.makeText(this, getString(R.string.batch_backup_split_hint, splitBackups), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void confirmBatchUninstall() {
         if (selectedPackages.isEmpty()) {
             return;
         }
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.batch_uninstall_title)
-                .setMessage(getString(R.string.batch_uninstall_message, selectedPackages.size()))
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> startBatchUninstall())
-                .show();
+        showActionConfirmDialog(
+                getApplicationInfo().loadIcon(getPackageManager()),
+                getString(R.string.batch_uninstall_title),
+                buildSelectedAppNamesSubtitle(),
+                getString(R.string.batch_uninstall_message, selectedPackages.size()),
+                getString(R.string.uninstall_confirm_yes),
+                true,
+                this::startBatchUninstall
+        );
+    }
+
+    private void confirmBatchBackup() {
+        if (selectedPackages.isEmpty()) {
+            return;
+        }
+        showActionConfirmDialog(
+                getApplicationInfo().loadIcon(getPackageManager()),
+                getString(R.string.batch_backup_title),
+                buildSelectedAppNamesSubtitle(),
+                getString(R.string.batch_backup_message, selectedPackages.size()),
+                getString(R.string.batch_backup_confirm_yes),
+                false,
+                this::backupSelectedApps
+        );
+    }
+
+    private String buildSelectedAppNamesSubtitle() {
+        List<String> appNames = new ArrayList<>();
+        for (String packageName : selectedPackages) {
+            AppRow row = findAppRow(packageName);
+            appNames.add(row == null ? packageName : row.appName);
+        }
+        Collections.sort(appNames, String.CASE_INSENSITIVE_ORDER);
+        StringBuilder subtitleBuilder = new StringBuilder();
+        for (int i = 0; i < appNames.size(); i++) {
+            if (i > 0) {
+                subtitleBuilder.append(", ");
+            }
+            subtitleBuilder.append(appNames.get(i));
+        }
+        return subtitleBuilder.toString();
     }
 
     private void startBatchUninstall() {
@@ -771,6 +1033,7 @@ public class MainActivity extends AppCompatActivity {
         TextView appDescription = content.findViewById(R.id.tv_app_description);
         TextView appDeveloper = content.findViewById(R.id.tv_app_developer);
         MaterialButton openEmail = content.findViewById(R.id.btn_open_email);
+        MaterialButton changeLanguage = content.findViewById(R.id.btn_change_language);
         MaterialButton openGithub = content.findViewById(R.id.btn_open_github);
         MaterialButton openTelegramBot = content.findViewById(R.id.btn_open_telegram_bot);
         MaterialButton openGithubProfile = content.findViewById(R.id.btn_open_github_profile);
@@ -816,11 +1079,96 @@ public class MainActivity extends AppCompatActivity {
                 .setView(content)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+        changeLanguage.setOnClickListener(v -> showLanguageDialog(dialog));
 
         Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         if (positive != null) {
             positive.setTextColor(ContextCompat.getColor(this, R.color.header_tone_accent));
         }
+    }
+
+    private void showLanguageDialog(AlertDialog appInfoDialog) {
+        View content = getLayoutInflater().inflate(R.layout.dialog_language_picker, null);
+        MaterialButton systemButton = content.findViewById(R.id.language_system_button);
+        MaterialButton englishButton = content.findViewById(R.id.language_english_button);
+        MaterialButton germanButton = content.findViewById(R.id.language_german_button);
+        MaterialButton cancelButton = content.findViewById(R.id.language_cancel_button);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(content)
+                .create();
+
+        String currentMode = getCurrentLanguageMode();
+        styleLanguageButton(systemButton, "system".equals(currentMode));
+        styleLanguageButton(englishButton, "en".equals(currentMode));
+        styleLanguageButton(germanButton, "de".equals(currentMode));
+
+        systemButton.setOnClickListener(v -> {
+            applyLanguageMode("system");
+            dialog.dismiss();
+            if (appInfoDialog != null && appInfoDialog.isShowing()) {
+                appInfoDialog.dismiss();
+            }
+            recreate();
+        });
+        englishButton.setOnClickListener(v -> {
+            applyLanguageMode("en");
+            dialog.dismiss();
+            if (appInfoDialog != null && appInfoDialog.isShowing()) {
+                appInfoDialog.dismiss();
+            }
+            recreate();
+        });
+        germanButton.setOnClickListener(v -> {
+            applyLanguageMode("de");
+            dialog.dismiss();
+            if (appInfoDialog != null && appInfoDialog.isShowing()) {
+                appInfoDialog.dismiss();
+            }
+            recreate();
+        });
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
+
+    private String getCurrentLanguageMode() {
+        LocaleListCompat locales = AppCompatDelegate.getApplicationLocales();
+        if (locales.isEmpty()) {
+            return "system";
+        }
+        String language = locales.get(0).getLanguage();
+        if ("de".equalsIgnoreCase(language)) {
+            return "de";
+        }
+        return "en";
+    }
+
+    private void applyLanguageMode(String mode) {
+        if ("de".equals(mode)) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("de"));
+            return;
+        }
+        if ("en".equals(mode)) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"));
+            return;
+        }
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList());
+    }
+
+    private void styleLanguageButton(MaterialButton button, boolean selected) {
+        if (selected) {
+            button.setTextColor(Color.parseColor("#CFE0FF"));
+            button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2F4D73")));
+            button.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#5C789E")));
+            return;
+        }
+        button.setTextColor(Color.parseColor("#D7E1F6"));
+        button.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+        button.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#50607D")));
     }
 
     private static class AppRow {
@@ -837,6 +1185,16 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public String toString() {
             return appName;
+        }
+    }
+
+    private static class BackupResult {
+        final List<File> savedFiles;
+        final boolean containsSplitApks;
+
+        BackupResult(List<File> savedFiles, boolean containsSplitApks) {
+            this.savedFiles = savedFiles;
+            this.containsSplitApks = containsSplitApks;
         }
     }
 
@@ -906,7 +1264,7 @@ public class MainActivity extends AppCompatActivity {
 
             settingsButton.setOnClickListener(v -> openSystemAppSettings(row.packageInfo.packageName));
             backupButton.setOnClickListener(v -> confirmBackup(row));
-            uninstallButton.setOnClickListener(v -> uninstallApp(row.packageInfo.packageName));
+            uninstallButton.setOnClickListener(v -> confirmUninstall(row));
             view.setOnClickListener(v -> {
                 if (selectionMode) {
                     toggleAppSelection(packageName);
