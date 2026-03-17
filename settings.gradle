@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AppsInspector"
+rootProject.name = "AppVault"
 include ':app'

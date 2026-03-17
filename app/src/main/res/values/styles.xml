@@ -1,5 +1,5 @@
 <resources>
-    <style name="TextAppearance.AppsInspector.FieldLabel" parent="TextAppearance.MaterialComponents.Caption">
+    <style name="TextAppearance.AppVault.FieldLabel" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">11sp</item>
         <item name="android:lineHeight">11sp</item>
     </style>

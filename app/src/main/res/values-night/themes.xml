@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.AppsInspector" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.AppVault" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">#33435B</item>
         <item name="colorPrimaryVariant">#2A364A</item>
         <item name="colorOnPrimary">#FFFFFF</item>

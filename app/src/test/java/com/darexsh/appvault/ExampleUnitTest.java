@@ -1,4 +1,4 @@
-package com.darexsh.appsinspector;
+package com.darexsh.appvault;
 
 import org.junit.Test;
 

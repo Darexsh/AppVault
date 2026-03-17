@@ -1,4 +1,4 @@
-package com.darexsh.appsinspector;
+package com.darexsh.appvault;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;

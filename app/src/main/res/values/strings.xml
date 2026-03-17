@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AppsInspector</string>
+    <string name="app_name">AppVault</string>
     <string name="search">Search</string>
     <string name="search_placeholder">Search for an app</string>
     <string name="filter_hint">Filter apps</string>
@@ -58,9 +58,9 @@
     <string name="settings_info_desc">App info</string>
     <string name="app_info_title">App info</string>
     <string name="app_info_version_label">Version</string>
-    <string name="app_info_name">AppsInspector</string>
+    <string name="app_info_name">AppVault</string>
     <string name="app_info_version">Version %1$s</string>
-    <string name="app_info_description">AppsInspector helps you explore and manage installed apps on your device. You can search quickly, filter by user/system/all apps, sort by name/install date/update date/app size, open detailed app information, jump to app settings, uninstall apps, and create APK backups. The app refreshes automatically when apps are installed, updated, or removed and keeps all inspected data locally on your device.</string>
+    <string name="app_info_description">AppVault helps you explore and manage installed apps on your device. You can search quickly, filter by user/system/all apps, sort by name/install date/update date/app size, open detailed app information, jump to app settings, uninstall apps, and create APK backups. The app refreshes automatically when apps are installed, updated, or removed and keeps all inspected data locally on your device.</string>
     <string name="app_info_developer_label">Developer:</string>
     <string name="app_info_developer_name">Darexsh by Daniel Sichler</string>
     <string name="app_info_open_email">Write email</string>

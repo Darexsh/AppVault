@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.darexsh.appsinspector'
+    namespace 'com.darexsh.appvault'
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.darexsh.appsinspector"
+        applicationId "com.darexsh.appvault"
         minSdk 26
         targetSdk 35
         versionCode 1

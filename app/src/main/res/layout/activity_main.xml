@@ -87,7 +87,7 @@
                     app:boxCornerRadiusTopStart="16dp"
                     app:boxStrokeColor="#66FFFFFF"
                     app:hintTextColor="#CCFFFFFF"
-                    app:hintTextAppearance="@style/TextAppearance.AppsInspector.FieldLabel"
+                    app:hintTextAppearance="@style/TextAppearance.AppVault.FieldLabel"
                     app:placeholderText="@string/search_placeholder"
                     app:placeholderTextColor="#B3FFFFFF"
                     app:startIconDrawable="@android:drawable/ic_menu_search"
@@ -127,7 +127,7 @@
                         app:boxCornerRadiusTopStart="16dp"
                         app:boxStrokeColor="#66FFFFFF"
                         app:hintTextColor="#CCFFFFFF"
-                        app:hintTextAppearance="@style/TextAppearance.AppsInspector.FieldLabel">
+                        app:hintTextAppearance="@style/TextAppearance.AppVault.FieldLabel">
 
                         <AutoCompleteTextView
                             android:id="@+id/filter_dropdown"
@@ -160,7 +160,7 @@
                         app:boxCornerRadiusTopStart="16dp"
                         app:boxStrokeColor="#66FFFFFF"
                         app:hintTextColor="#CCFFFFFF"
-                        app:hintTextAppearance="@style/TextAppearance.AppsInspector.FieldLabel">
+                        app:hintTextAppearance="@style/TextAppearance.AppVault.FieldLabel">
 
                         <AutoCompleteTextView
                             android:id="@+id/sort_dropdown"

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-📱 AppsInspector
+📱 AppVault
 ============================
 
 **An Android app for inspecting and managing installed applications**  
@@ -30,7 +30,7 @@
 🚀 About the Project
 ==============
 
-**AppsInspector** is an Android application designed to help you inspect installed apps on your device. It provides a searchable app inventory, user/system filtering, sorting options, package-level details, backup actions, and quick access to app settings.
+**AppVault** is an Android application designed to help you inspect installed apps on your device. It provides a searchable app inventory, user/system filtering, sorting options, package-level details, backup actions, and quick access to app settings.
 
 * * *
 
@@ -69,7 +69,22 @@
 📸 Screenshots
 --------------
 
-Screenshots can be added later in a `Screenshots/` folder and referenced here.
+<table>
+  <tr>
+    <td align="center"><b>Home (Search + Filter + Sort)</b><br><img src="Screenshots/Home_Main.png" width="200" height="450"></td>
+    <td align="center"><b>Selection Mode</b><br><img src="Screenshots/Selection_Mode.png" width="200" height="450"></td>
+    <td align="center"><b>Backup Selected Dialog</b><br><img src="Screenshots/Dialog_Backup_Selected.png" width="200" height="450"></td>
+    <td align="center"><b>Uninstall Selected Dialog</b><br><img src="Screenshots/Dialog_Uninstall_Selected.png" width="200" height="450"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>App Row Actions Expanded</b><br><img src="Screenshots/App_Actions.png" width="200" height="450"></td>
+    <td align="center"><b>App Details</b><br><img src="Screenshots/App_Details.png" width="200" height="450"></td>
+    <td align="center"><b>App Details Permissions</b><br><img src="Screenshots/App_Details_Permissions.png" width="200" height="450"></td>
+    <td align="center"><b>App Info + Language</b><br><img src="Screenshots/App_Info_Language.png" width="200" height="450"></td>
+  </tr>
+</table>
+
+Placeholders above define the recommended screenshot set and file names for the `Screenshots/` folder.
 
 * * *
 

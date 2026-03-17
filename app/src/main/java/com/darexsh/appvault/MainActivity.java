@@ -1,4 +1,4 @@
-package com.darexsh.appsinspector;
+package com.darexsh.appvault;
 
 import android.content.Intent;
 import android.content.ActivityNotFoundException;
@@ -63,7 +63,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "AppsInspector";
+    private static final String TAG = "AppVault";
 
     private static final int FILTER_ALL = 0;
     private static final int FILTER_USER = 1;
