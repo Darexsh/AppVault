@@ -71,20 +71,19 @@
 
 <table>
   <tr>
-    <td align="center"><b>Home (Search + Filter + Sort)</b><br><img src="Screenshots/Home_Main.png" width="200" height="450"></td>
-    <td align="center"><b>Selection Mode</b><br><img src="Screenshots/Selection_Mode.png" width="200" height="450"></td>
-    <td align="center"><b>Backup Selected Dialog</b><br><img src="Screenshots/Dialog_Backup_Selected.png" width="200" height="450"></td>
-    <td align="center"><b>Uninstall Selected Dialog</b><br><img src="Screenshots/Dialog_Uninstall_Selected.png" width="200" height="450"></td>
-  </tr>
-  <tr>
-    <td align="center"><b>App Row Actions Expanded</b><br><img src="Screenshots/App_Actions.png" width="200" height="450"></td>
-    <td align="center"><b>App Details</b><br><img src="Screenshots/App_Details.png" width="200" height="450"></td>
-    <td align="center"><b>App Details Permissions</b><br><img src="Screenshots/App_Details_Permissions.png" width="200" height="450"></td>
-    <td align="center"><b>App Info + Language</b><br><img src="Screenshots/App_Info_Language.png" width="200" height="450"></td>
+    <td align="center"><b>Home Screen</b><br><img src="Screenshots/Home.png" width="200" height="450"></td>
+    <td align="center"><b>Details</b><br><img src="Screenshots/Details.png" width="200" height="450"></td>
+    <td align="center"><b>Selection Mode</b><br><img src="Screenshots/Selection_mode.png" width="200" height="450"></td>
   </tr>
 </table>
 
-Placeholders above define the recommended screenshot set and file names for the `Screenshots/` folder.
+<table>
+  <tr>
+    <td align="center"><b>Backup Dialog</b><br><img src="Screenshots/Backup_selection.png" width="200" height="450"></td>
+    <td align="center"><b>Uninstall Dialog</b><br><img src="Screenshots/Uninstall_selection.png" width="200" height="450"></td>
+    <td align="center"><b>About</b><br><img src="Screenshots/About.png" width="200" height="450"></td>
+  </tr>
+</table>
 
 * * *
 
