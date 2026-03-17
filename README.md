@@ -95,7 +95,7 @@
     * Clone or download the repository from GitHub:
 
         ```bash
-        git clone https://github.com/Darexsh/AppsInspector.git
+        git clone https://github.com/Darexsh/AppVault.git
         ```
 
     * Open the project in **Android Studio**.
