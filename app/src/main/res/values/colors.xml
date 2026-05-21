@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="header_tone_primary">#33435B</color>
     <color name="header_tone_accent">#7C899E</color>
+    <color name="app_info_secondary_action_stroke">#61000000</color>
+    <color name="app_info_secondary_action_content">#8A000000</color>
 </resources>

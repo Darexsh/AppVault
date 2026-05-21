@@ -193,6 +193,13 @@
 
 * * *
 
+🔒 Privacy
+----------
+
+* Privacy Policy: [PRIVACY_POLICY.md](PRIVACY_POLICY.md)
+
+* * *
+
 📜 License
 ----------
 

@@ -149,6 +149,7 @@ class AppDialogManager {
         MaterialButton openGithub = content.findViewById(R.id.btn_open_github);
         MaterialButton openTelegramBot = content.findViewById(R.id.btn_open_telegram_bot);
         MaterialButton openGithubProfile = content.findViewById(R.id.btn_open_github_profile);
+        MaterialButton openPrivacy = content.findViewById(R.id.btn_open_privacy);
         MaterialButton openCoffee = content.findViewById(R.id.btn_open_coffee);
 
         appName.setText(R.string.app_info_name);
@@ -183,6 +184,8 @@ class AppDialogManager {
                 activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/darexsh_bot"))));
         openGithubProfile.setOnClickListener(v ->
                 activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Darexsh"))));
+        openPrivacy.setOnClickListener(v ->
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Darexsh/AppVault/blob/main/PRIVACY_POLICY.md"))));
         openCoffee.setOnClickListener(v ->
                 activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://buymeacoffee.com/darexsh"))));
 
@@ -193,6 +196,10 @@ class AppDialogManager {
                 .show();
 
         changeLanguage.setOnClickListener(v -> showLanguageDialog(dialog, languageChangedCallback));
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_app_info_dialog);
+        }
 
         Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         if (positive != null) {

@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,7 +52,9 @@
             android:id="@+id/tv_app_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lineSpacingExtra="4dp"
+            android:layout_marginTop="6dp"
+            android:lineHeight="22sp"
+            android:lineSpacingExtra="6dp"
             android:textColor="?attr/colorOnBackground"
             android:textSize="14sp" />
 
@@ -60,7 +62,7 @@
             android:id="@+id/tv_app_developer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -68,100 +70,138 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="16dp"
             android:alpha="0.12"
             android:background="?attr/colorOnBackground" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_change_language"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_email"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/app_info_open_email"
+                android:gravity="center"
+                android:padding="0dp"
+                app:backgroundTint="@android:color/transparent"
+                app:icon="@drawable/gmail_icon"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="20dp"
+                app:iconTint="@null"
+                app:cornerRadius="24dp"
+                app:strokeColor="@color/app_info_secondary_action_stroke"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_github"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/app_info_open_github"
+                android:gravity="center"
+                android:padding="0dp"
+                app:backgroundTint="@android:color/transparent"
+                app:icon="@drawable/linktree_icon"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="20dp"
+                app:iconTint="@null"
+                app:cornerRadius="24dp"
+                app:strokeColor="@color/app_info_secondary_action_stroke"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_telegram_bot"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/app_info_open_telegram_bot"
+                android:gravity="center"
+                android:padding="0dp"
+                app:backgroundTint="@android:color/transparent"
+                app:icon="@drawable/telegram_icon"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="20dp"
+                app:iconTint="@null"
+                app:cornerRadius="24dp"
+                app:strokeColor="@color/app_info_secondary_action_stroke"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_github_profile"
+                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/app_info_open_github_profile"
+                android:gravity="center"
+                android:padding="0dp"
+                app:backgroundTint="@android:color/transparent"
+                app:icon="@drawable/github_icon"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="20dp"
+                app:iconTint="@null"
+                app:cornerRadius="24dp"
+                app:strokeColor="@color/app_info_secondary_action_stroke"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_change_language"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:text="@string/app_info_change_language"
             android:textAllCaps="false"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/app_info_secondary_action_content"
             android:textSize="14sp"
-            app:backgroundTint="@color/header_tone_primary"
+            app:backgroundTint="@android:color/transparent"
             app:cornerRadius="12dp"
             app:icon="@android:drawable/ic_menu_manage"
             app:iconGravity="textStart"
             app:iconPadding="8dp"
             app:iconSize="18dp"
-            app:iconTint="@null" />
+            app:iconTint="@color/app_info_secondary_action_content"
+            app:strokeColor="@color/app_info_secondary_action_stroke"
+            app:strokeWidth="1dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_open_email"
+            android:id="@+id/btn_open_privacy"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/app_info_open_email"
+            android:layout_marginBottom="10dp"
+            android:text="@string/app_info_open_privacy"
             android:textAllCaps="false"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/app_info_secondary_action_content"
             android:textSize="14sp"
-            app:backgroundTint="@color/header_tone_primary"
+            app:backgroundTint="@android:color/transparent"
             app:cornerRadius="12dp"
-            app:icon="@drawable/gmail_icon"
+            app:icon="@android:drawable/ic_menu_info_details"
             app:iconGravity="textStart"
             app:iconPadding="8dp"
             app:iconSize="18dp"
-            app:iconTint="@null" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_open_github"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/app_info_open_github"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            app:backgroundTint="@color/header_tone_primary"
-            app:cornerRadius="12dp"
-            app:icon="@drawable/linktree_icon"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconSize="18dp"
-            app:iconTint="@null" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_open_telegram_bot"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/app_info_open_telegram_bot"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            app:backgroundTint="@color/header_tone_primary"
-            app:cornerRadius="12dp"
-            app:icon="@drawable/telegram_icon"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconSize="18dp"
-            app:iconTint="@null" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_open_github_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/app_info_open_github_profile"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            app:backgroundTint="@color/header_tone_primary"
-            app:cornerRadius="12dp"
-            app:icon="@drawable/github_icon"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconSize="18dp"
-            app:iconTint="@null" />
+            app:iconTint="@color/app_info_secondary_action_content"
+            app:strokeColor="@color/app_info_secondary_action_stroke"
+            app:strokeWidth="1dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_open_coffee"
+            style="@style/Widget.Material3.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="@string/app_info_open_coffee"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"

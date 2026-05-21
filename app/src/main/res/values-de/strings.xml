@@ -60,8 +60,7 @@
     <string name="app_info_version_label">Version</string>
     <string name="app_info_name">AppVault</string>
     <string name="app_info_version">Version %1$s</string>
-    <string name="app_info_description">AppVault hilft dir, installierte Apps auf deinem Gerät zu durchsuchen und zu verwalten. Du kannst schnell suchen, nach Benutzer-/System-/allen Apps filtern, nach Name/Installationsdatum/Aktualisierungsdatum/App-Größe sortieren, detaillierte App-Infos ansehen, App-Einstellungen öffnen, Apps deinstallieren und APK-Backups erstellen. Die App aktualisiert die Liste automatisch bei Installationen, Updates und Entfernungen und speichert alle Daten lokal auf deinem Gerät.</string>
-    <string name="app_info_developer_label">Entwickler:</string>
+    <string name="app_info_description">AppVault ermöglicht das Durchsuchen, Organisieren und Verwalten installierter Anwendungen auf dem Gerät. Sie bietet Funktionen zum Suchen, Filtern und Sortieren sowie Zugriff auf detaillierte Informationen und verschiedene Verwaltungsoptionen. Alle Daten werden lokal auf dem Gerät gespeichert.</string>    <string name="app_info_developer_label">Entwickler:</string>
     <string name="app_info_developer_name">Darexsh by Daniel Sichler</string>
     <string name="app_info_open_email">E-Mail schreiben</string>
     <string name="app_info_change_language">Sprache</string>
@@ -73,7 +72,8 @@
     <string name="app_info_open_github">Social Media öffnen</string>
     <string name="app_info_open_telegram_bot">Telegram-Bot öffnen</string>
     <string name="app_info_open_github_profile">GitHub-Profil</string>
-    <string name="app_info_open_coffee">Kaffee spendieren</string>
+    <string name="app_info_open_privacy">Datenschutz</string>
+    <string name="app_info_open_coffee">Entwicklung unterstützen</string>
     <string name="app_actions_expand">App-Aktionen ausklappen</string>
     <string name="app_actions_collapse">App-Aktionen einklappen</string>
     <string name="app_action_settings">App-Einstellungen</string>
