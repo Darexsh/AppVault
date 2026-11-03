@@ -190,7 +190,7 @@
     <string name="install_preparing">Preparing installation…</string>
     <string name="install_success">Installation complete</string>
     <string name="install_failed">Could not install this APK backup</string>
-    <string name="install_invalid_file">Choose an .apk or AppVault .apks backup</string>
+    <string name="install_invalid_file">Choose an .apk, .apkm, .xapk, or AppVault .apks backup</string>
     <string name="install_permission_required">Allow AppVault to install apps in settings, then tap Install backup again.</string>
     <string name="install_settings_unavailable">Could not open the install permission settings.</string>
     <string name="backup_permission_required">Please allow file access to save backups.</string>

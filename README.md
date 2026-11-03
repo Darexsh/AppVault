@@ -51,7 +51,7 @@
 
 * 💾 **APK Backup**: Save backups in `/storage/emulated/0/App_Backups`. Regular apps are saved as `.apk` files; split apps are saved as one `.apks` archive containing the base APK and its splits.
 
-* 📲 **Install Backups**: Use **Install backup apps** below the filter and sort controls to choose an `.apk` or AppVault `.apks` backup. The picker opens in `App_Backups`, and Android handles the install confirmation.
+* 📲 **Install Backups**: Use **Install backup apps** below the filter and sort controls to choose an `.apk`, APKMirror `.apkm`, APKPure `.xapk`, or AppVault `.apks` backup. The picker opens in `App_Backups`, and Android handles the install confirmation. XAPK APK splits are installed; bundled OBB game data is not copied.
 
 * ✅ **Backup Confirm Dialog**: Friendly confirmation dialog before each backup operation.
 
@@ -144,11 +144,13 @@
 
     * Tap **Install backup apps** below the filter and sort controls.
 
-    * Choose an `.apk` file or an AppVault `.apks` archive from `App_Backups`.
+    * Choose an `.apk` file, an APKMirror `.apkm`, APKPure `.xapk`, or AppVault `.apks` archive from `App_Backups`.
 
     * If prompted, allow AppVault to install apps in Android settings, then tap the button again.
 
     * Confirm the installation in Android's package installer.
+
+    * XAPK archives install their APK files. Any bundled OBB game data is not copied.
 
 5. **Selection Mode**:
 
@@ -198,7 +200,7 @@
 
 * 💾 APK backups are copied from installed APK source files into `App_Backups`; split apps are packed into one `.apks` ZIP archive.
 
-* 📲 Backup installation streams `.apk` files or the base and split APKs from an AppVault `.apks` archive into an Android `PackageInstaller` session. Android shows its own confirmation screen; split APKs are not merged into a universal APK.
+* 📲 Backup installation streams `.apk` files or the base and split APKs from APKMirror `.apkm`, APKPure `.xapk`, and AppVault `.apks` archives into an Android `PackageInstaller` session. XAPK OBB data is not copied. Android shows its own confirmation screen; split APKs are not merged into a universal APK.
 
 * 🧭 Navigation includes a dedicated app-details activity.
 
