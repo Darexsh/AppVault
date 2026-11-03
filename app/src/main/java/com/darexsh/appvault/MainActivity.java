@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     private TextInputEditText searchInput;
     private AutoCompleteTextView filterDropdown;
     private AutoCompleteTextView sortDropdown;
-    private TextView headerSubtitle;
+    private TextView appCount;
     private TextView emptyView;
-    private View batchActionsCard;
+    private View batchActionsBar;
     private TextView batchSelectionCount;
     private MaterialButton batchClearButton;
     private MaterialButton batchBackupButton;
@@ -93,13 +93,13 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
 
         appListView.setEmptyView(emptyView);
 
-        headerSubtitle = findViewById(R.id.header_subtitle);
+        appCount = findViewById(R.id.app_count);
         searchInput = findViewById(R.id.search_input);
         filterDropdown = findViewById(R.id.filter_dropdown);
         sortDropdown = findViewById(R.id.sort_dropdown);
         TextView appInfoButton = findViewById(R.id.btn_app_info);
         MaterialButton installBackupButton = findViewById(R.id.btn_install_backup);
-        batchActionsCard = findViewById(R.id.batch_actions_card);
+        batchActionsBar = findViewById(R.id.batch_actions_bar);
         batchSelectionCount = findViewById(R.id.batch_selection_count);
         MaterialButton batchSelectAllButton = findViewById(R.id.batch_select_all);
         batchClearButton = findViewById(R.id.batch_clear);
@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
 
         appAdapter = new AppListAdapter(this, appCatalogManager.getFilteredAppRows(), this);
         appListView.setAdapter(appAdapter);
+        updateAppCount();
 
         setupSearchInput();
         setupFilterDropdown();
@@ -214,10 +215,14 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         filterAdapter.setDropDownViewResource(R.layout.item_filter_dropdown);
         filterDropdown.setAdapter(filterAdapter);
         filterDropdown.setDropDownBackgroundResource(R.drawable.bg_dropdown_menu);
-        filterDropdown.setText(options[AppCatalogManager.FILTER_USER], false);
+        filterDropdown.setText(getString(
+                R.string.filter_selected_value,
+                options[AppCatalogManager.FILTER_USER]
+        ), false);
         filterDropdown.setOnClickListener(v -> filterDropdown.showDropDown());
         filterDropdown.setOnItemClickListener((parent, view, position, id) -> {
             appCatalogManager.setCurrentFilter(position);
+            filterDropdown.setText(getString(R.string.filter_selected_value, options[position]), false);
             applyFiltersAndRefreshUi();
         });
     }
@@ -233,10 +238,14 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         sortAdapter.setDropDownViewResource(R.layout.item_filter_dropdown);
         sortDropdown.setAdapter(sortAdapter);
         sortDropdown.setDropDownBackgroundResource(R.drawable.bg_dropdown_menu);
-        sortDropdown.setText(options[AppCatalogManager.SORT_NAME], false);
+        sortDropdown.setText(getString(
+                R.string.sort_selected_value,
+                options[AppCatalogManager.SORT_NAME]
+        ), false);
         sortDropdown.setOnClickListener(v -> sortDropdown.showDropDown());
         sortDropdown.setOnItemClickListener((parent, view, position, id) -> {
             appCatalogManager.setCurrentSort(position);
+            sortDropdown.setText(getString(R.string.sort_selected_value, options[position]), false);
             applyFiltersAndRefreshUi();
         });
     }
@@ -256,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     private void applyFiltersAndRefreshUi() {
         appCatalogManager.applyFilters(appBackupManager);
         appAdapter.notifyDataSetChanged();
-        updateHeaderSubtitle();
+        updateAppCount();
     }
 
     private void reloadInstalledApps() {
@@ -308,12 +317,18 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         if (filterDropdown != null) {
             String[] filterOptions = getFilterOptions();
             int filterIndex = Math.max(0, Math.min(appCatalogManager.getCurrentFilter(), filterOptions.length - 1));
-            filterDropdown.setText(filterOptions[filterIndex], false);
+            filterDropdown.setText(getString(
+                    R.string.filter_selected_value,
+                    filterOptions[filterIndex]
+            ), false);
         }
         if (sortDropdown != null) {
             String[] sortOptions = getSortOptions();
             int sortIndex = Math.max(0, Math.min(appCatalogManager.getCurrentSort(), sortOptions.length - 1));
-            sortDropdown.setText(sortOptions[sortIndex], false);
+            sortDropdown.setText(getString(
+                    R.string.sort_selected_value,
+                    sortOptions[sortIndex]
+            ), false);
         }
     }
 
@@ -335,37 +350,37 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     }
 
     private void updateBatchActionsUi() {
-        if (batchActionsCard == null) {
+        if (batchActionsBar == null) {
             return;
         }
         boolean shouldShow = selectionManager.isSelectionMode() && selectionManager.hasSelection();
-        boolean isVisible = batchActionsCard.getVisibility() == View.VISIBLE;
+        boolean isVisible = batchActionsBar.getVisibility() == View.VISIBLE;
 
-        batchActionsCard.animate().cancel();
+        batchActionsBar.animate().cancel();
 
         if (!shouldShow) {
             if (isVisible) {
-                batchActionsCard.animate()
+                batchActionsBar.animate()
                         .alpha(0f)
                         .translationY(16f)
                         .setDuration(140)
                         .withEndAction(() -> {
-                            batchActionsCard.setVisibility(View.GONE);
-                            batchActionsCard.setAlpha(1f);
-                            batchActionsCard.setTranslationY(0f);
+                            batchActionsBar.setVisibility(View.GONE);
+                            batchActionsBar.setAlpha(1f);
+                            batchActionsBar.setTranslationY(0f);
                         })
                         .start();
             } else {
-                batchActionsCard.setVisibility(View.GONE);
+                batchActionsBar.setVisibility(View.GONE);
             }
             return;
         }
 
         if (!isVisible) {
-            batchActionsCard.setAlpha(0f);
-            batchActionsCard.setTranslationY(16f);
-            batchActionsCard.setVisibility(View.VISIBLE);
-            batchActionsCard.animate()
+            batchActionsBar.setAlpha(0f);
+            batchActionsBar.setTranslationY(16f);
+            batchActionsBar.setVisibility(View.VISIBLE);
+            batchActionsBar.animate()
                     .alpha(1f)
                     .translationY(0f)
                     .setDuration(180)
@@ -379,24 +394,12 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         batchUninstallButton.setEnabled(hasSelection);
     }
 
-    private void updateHeaderSubtitle() {
-        String modeLabel;
-        int currentFilter = appCatalogManager.getCurrentFilter();
-        if (currentFilter == AppCatalogManager.FILTER_USER) {
-            modeLabel = getString(R.string.filter_user);
-        } else if (currentFilter == AppCatalogManager.FILTER_SYSTEM) {
-            modeLabel = getString(R.string.filter_system);
-        } else {
-            modeLabel = getString(R.string.filter_all);
-        }
-
-        String subtitle = getString(
-                R.string.header_subtitle_state,
+    private void updateAppCount() {
+        appCount.setText(getString(
+                R.string.app_count_state,
                 appCatalogManager.getFilteredCount(),
-                appCatalogManager.getAllCount(),
-                modeLabel
-        );
-        headerSubtitle.setText(subtitle);
+                appCatalogManager.getAllCount()
+        ));
     }
 
     private void openDetailsScreen(String packageName) {

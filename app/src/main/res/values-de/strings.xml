@@ -4,12 +4,14 @@
     <string name="search_placeholder">Nach einer App suchen</string>
     <string name="filter_hint">Apps filtern</string>
     <string name="sort_hint">Apps sortieren</string>
+    <string name="filter_selected_value">Filter: %1$s</string>
+    <string name="sort_selected_value">Sort.: %1$s</string>
     <string name="sort_name">Name</string>
     <string name="sort_install_date">Install-Datum</string>
     <string name="sort_update_date">Update-Datum</string>
     <string name="sort_app_size">App-Größe</string>
     <string name="header_subtitle">Übersicht installierter Apps</string>
-    <string name="header_subtitle_state">%1$d von %2$d Apps angezeigt - %3$s</string>
+    <string name="app_count_state">%1$d von %2$d Apps</string>
     <string name="no_apps_found">Keine Apps gefunden</string>
     <string name="splash_subtitle">Durchsuchen · prüfen · sichern</string>
     <string name="loading_apps">Apps werden geladen…</string>

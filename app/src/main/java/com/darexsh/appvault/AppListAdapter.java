@@ -1,7 +1,6 @@
 package com.darexsh.appvault;
 
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -107,7 +106,9 @@ class AppListAdapter extends ArrayAdapter<AppRow> {
         actionsContainer.animate().cancel();
         expandButton.animate().cancel();
         selectCheckBox.setChecked(selected);
-        view.setBackgroundColor(selected ? 0x1A6F89B8 : Color.TRANSPARENT);
+        view.setActivated(selected);
+        view.setClickable(true);
+        view.setFocusable(true);
 
         if (listener.isSelectionMode()) {
             actionsContainer.setVisibility(View.GONE);
