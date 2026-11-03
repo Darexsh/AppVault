@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/splash_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B1220">
+
+    <ImageView
+        android:id="@+id/splash_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop" />
+
+    <ImageView
+        android:id="@+id/splash_app_tiles"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/splash_backup_tray"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/splash_apk_card"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/splash_brand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="72dp"
+        android:paddingEnd="24dp">
+
+        <TextView
+            android:id="@+id/splash_app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="#F1F5FF"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/splash_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:letterSpacing="0.03"
+            android:text="@string/splash_subtitle"
+            android:textColor="#C3D4F2"
+            android:textSize="13sp" />
+    </LinearLayout>
+</FrameLayout>

@@ -53,7 +53,11 @@ class AppDialogManager {
         MaterialButton noButton = content.findViewById(R.id.uninstall_no_button);
         MaterialButton yesButton = content.findViewById(R.id.uninstall_yes_button);
 
-        iconView.setImageDrawable(icon);
+        if (icon == null) {
+            iconView.setImageResource(android.R.drawable.sym_def_app_icon);
+        } else {
+            iconView.setImageDrawable(icon);
+        }
         titleView.setText(title);
         subtitleView.setText(subtitle);
         messageView.setText(message);
@@ -92,7 +96,11 @@ class AppDialogManager {
         MaterialButton noButton = content.findViewById(R.id.backup_no_button);
         MaterialButton yesButton = content.findViewById(R.id.backup_yes_button);
 
-        appIcon.setImageDrawable(row.appIcon);
+        if (row.appIcon == null) {
+            appIcon.setImageResource(android.R.drawable.sym_def_app_icon);
+        } else {
+            appIcon.setImageDrawable(row.appIcon);
+        }
         appName.setText(row.appName);
         backupMessage.setText(activity.getString(R.string.backup_confirm_message, row.appName));
 

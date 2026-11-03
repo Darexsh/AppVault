@@ -3,7 +3,6 @@ package com.darexsh.appvault;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 
 import java.util.ArrayList;
@@ -63,18 +62,36 @@ class AppCatalogManager {
         return allAppRows.size();
     }
 
-    void loadInstalledApps(PackageManager packageManager) {
+    Set<String> setInstalledApps(List<AppRow> installedRows) {
         allAppRows.clear();
-        allAppRows.addAll(queryInstalledApps(packageManager));
-    }
-
-    Set<String> reloadInstalledApps(PackageManager packageManager) {
-        loadInstalledApps(packageManager);
+        allAppRows.addAll(installedRows);
         Set<String> existingPackages = new HashSet<>();
         for (AppRow row : allAppRows) {
             existingPackages.add(row.packageInfo.packageName);
         }
         return existingPackages;
+    }
+
+    static List<AppRow> queryInstalledApps(PackageManager packageManager) {
+        List<PackageInfo> installedPackages;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            installedPackages = packageManager.getInstalledPackages(PackageManager.PackageInfoFlags.of(0));
+        } else {
+            installedPackages = packageManager.getInstalledPackages(0);
+        }
+
+        List<AppRow> rows = new ArrayList<>(installedPackages.size());
+        for (PackageInfo packageInfo : installedPackages) {
+            ApplicationInfo appInfo = packageInfo.applicationInfo;
+            if (appInfo == null) {
+                continue;
+            }
+
+            String appName = String.valueOf(packageManager.getApplicationLabel(appInfo));
+            // Icons are loaded by the list adapter as rows become visible.
+            rows.add(new AppRow(appName, packageInfo, null));
+        }
+        return rows;
     }
 
     void applyFilters(AppBackupManager appBackupManager) {
@@ -87,9 +104,8 @@ class AppCatalogManager {
             }
 
             if (!searchLower.isEmpty()) {
-                String appNameLower = row.appName.toLowerCase(Locale.US);
-                String packageLower = row.packageInfo.packageName.toLowerCase(Locale.US);
-                if (!appNameLower.contains(searchLower) && !packageLower.contains(searchLower)) {
+                if (!row.normalizedAppName.contains(searchLower)
+                        && !row.normalizedPackageName.contains(searchLower)) {
                     continue;
                 }
             }
@@ -126,30 +142,6 @@ class AppCatalogManager {
         return subtitleBuilder.toString();
     }
 
-    private List<AppRow> queryInstalledApps(PackageManager packageManager) {
-        List<PackageInfo> installedPackages;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            installedPackages = packageManager.getInstalledPackages(PackageManager.PackageInfoFlags.of(0));
-        } else {
-            installedPackages = packageManager.getInstalledPackages(0);
-        }
-
-        List<AppRow> rows = new ArrayList<>();
-        for (PackageInfo packageInfo : installedPackages) {
-            ApplicationInfo appInfo = packageInfo.applicationInfo;
-            if (appInfo == null) {
-                continue;
-            }
-
-            String appName = String.valueOf(packageManager.getApplicationLabel(appInfo));
-            Drawable appIcon = appInfo.loadIcon(packageManager);
-            rows.add(new AppRow(appName, packageInfo, appIcon));
-        }
-
-        Collections.sort(rows, Comparator.comparing(row -> row.appName.toLowerCase(Locale.US)));
-        return rows;
-    }
-
     private void sortFilteredRows(AppBackupManager appBackupManager) {
         Comparator<AppRow> comparator;
         if (currentSort == SORT_INSTALL_DATE) {
@@ -168,7 +160,7 @@ class AppCatalogManager {
                     appBackupManager.getSourceApkSize(left)
             );
         } else {
-            comparator = Comparator.comparing(row -> row.appName.toLowerCase(Locale.US));
+            comparator = Comparator.comparing(row -> row.normalizedAppName);
         }
         Collections.sort(filteredAppRows, comparator);
     }

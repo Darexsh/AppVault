@@ -5,12 +5,16 @@ import android.graphics.drawable.Drawable;
 
 class AppRow {
     final String appName;
+    final String normalizedAppName;
+    final String normalizedPackageName;
     final PackageInfo packageInfo;
-    final Drawable appIcon;
+    volatile Drawable appIcon;
 
     AppRow(String appName, PackageInfo packageInfo, Drawable appIcon) {
         this.appName = appName;
+        this.normalizedAppName = appName.toLowerCase(java.util.Locale.US);
         this.packageInfo = packageInfo;
+        this.normalizedPackageName = packageInfo.packageName.toLowerCase(java.util.Locale.US);
         this.appIcon = appIcon;
     }
 

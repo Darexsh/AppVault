@@ -23,6 +23,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements AppListAdapter.Listener {
     private final AppBackupManager appBackupManager = new AppBackupManager();
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     private final AppCatalogManager appCatalogManager = new AppCatalogManager();
     private final SelectionManager selectionManager = new SelectionManager();
     private final List<String> pendingBatchUninstallPackages = new ArrayList<>();
+    private final ExecutorService catalogLoader = Executors.newSingleThreadExecutor();
 
     private AppDialogManager appDialogManager;
     private AppOperationsManager appOperationsManager;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     private AutoCompleteTextView filterDropdown;
     private AutoCompleteTextView sortDropdown;
     private TextView headerSubtitle;
+    private TextView emptyView;
     private View batchActionsCard;
     private TextView batchSelectionCount;
     private MaterialButton batchClearButton;
@@ -47,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     private MaterialButton batchUninstallButton;
 
     private boolean batchUninstallInProgress = false;
+    private boolean catalogLoadInProgress = false;
+    private boolean catalogReloadPending = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +64,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         packageChangeWatcher = new PackageChangeWatcher(this, this::reloadInstalledApps);
 
         ListView appListView = findViewById(R.id.app_list);
-        TextView emptyView = findViewById(R.id.empty_view);
-        View headerCard = findViewById(R.id.header_card);
+        emptyView = findViewById(R.id.empty_view);
 
         appListView.setEmptyView(emptyView);
 
@@ -85,10 +90,6 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         appInfoButton.setOnClickListener(v -> showAppInfoDialog());
 
         promptForBackupStoragePermissionIfNeeded();
-        animateScreenEntrance(headerCard, appListView);
-
-        appCatalogManager.loadInstalledApps(getPackageManager());
-        applyFiltersAndRefreshUi();
     }
 
     @Override
@@ -111,6 +112,15 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     protected void onStop() {
         super.onStop();
         packageChangeWatcher.unregister();
+    }
+
+    @Override
+    protected void onDestroy() {
+        catalogLoader.shutdownNow();
+        if (appAdapter != null) {
+            appAdapter.close();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -206,10 +216,48 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     }
 
     private void reloadInstalledApps() {
-        Set<String> existingPackages = appCatalogManager.reloadInstalledApps(getPackageManager());
-        selectionManager.pruneToExistingPackages(existingPackages);
-        applyFiltersAndRefreshUi();
-        updateBatchActionsUi();
+        if (catalogLoadInProgress) {
+            catalogReloadPending = true;
+            return;
+        }
+
+        catalogLoadInProgress = true;
+        if (appCatalogManager.getAllCount() == 0) {
+            emptyView.setText(R.string.loading_apps);
+        }
+
+        PackageManager packageManager = getPackageManager();
+        catalogLoader.execute(() -> {
+            List<AppRow> installedRows;
+            try {
+                installedRows = AppCatalogManager.queryInstalledApps(packageManager);
+            } catch (RuntimeException e) {
+                installedRows = null;
+            }
+
+            List<AppRow> loadedRows = installedRows;
+            runOnUiThread(() -> {
+                catalogLoadInProgress = false;
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+
+                if (loadedRows != null) {
+                    Set<String> existingPackages = appCatalogManager.setInstalledApps(loadedRows);
+                    selectionManager.pruneToExistingPackages(existingPackages);
+                    emptyView.setText(R.string.no_apps_found);
+                    applyFiltersAndRefreshUi();
+                    updateBatchActionsUi();
+                } else if (appCatalogManager.getAllCount() == 0) {
+                    emptyView.setText(R.string.apps_load_failed);
+                }
+
+                if (catalogReloadPending) {
+                    catalogReloadPending = false;
+                    reloadInstalledApps();
+                }
+            });
+        });
     }
 
     private void refreshFilterAndSortSelectionLabels() {
@@ -312,25 +360,6 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         intent.putExtra(AppDetailsActivity.EXTRA_PACKAGE_NAME, packageName);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-    }
-
-    private void animateScreenEntrance(View headerCard, View appListView) {
-        headerCard.setAlpha(0f);
-        headerCard.setTranslationY(-18f);
-        headerCard.animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(260)
-                .start();
-
-        appListView.setAlpha(0f);
-        appListView.setTranslationY(20f);
-        appListView.post(() -> appListView.animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setStartDelay(80)
-                .setDuration(280)
-                .start());
     }
 
     private void confirmUninstall(AppRow row) {

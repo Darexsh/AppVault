@@ -1,6 +1,10 @@
 package com.darexsh.appvault;
 
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +20,10 @@ import androidx.annotation.Nullable;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class AppListAdapter extends ArrayAdapter<AppRow> {
 
@@ -41,11 +49,22 @@ class AppListAdapter extends ArrayAdapter<AppRow> {
 
     private final LayoutInflater inflater;
     private final Listener listener;
+    private final PackageManager packageManager;
+    private final ExecutorService iconLoader = Executors.newFixedThreadPool(2);
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final Set<String> pendingIcons = ConcurrentHashMap.newKeySet();
+    private volatile boolean closed;
 
     AppListAdapter(MainActivity context, List<AppRow> apps, Listener listener) {
         super(context, R.layout.item_app_row, apps);
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
+        this.packageManager = context.getPackageManager();
+    }
+
+    void close() {
+        closed = true;
+        iconLoader.shutdownNow();
     }
 
     @NonNull
@@ -71,7 +90,14 @@ class AppListAdapter extends ArrayAdapter<AppRow> {
         MaterialButton backupButton = view.findViewById(R.id.action_backup);
         MaterialButton uninstallButton = view.findViewById(R.id.action_uninstall);
 
-        iconView.setImageDrawable(row.appIcon);
+        iconView.setTag(row);
+        Drawable appIcon = row.appIcon;
+        if (appIcon != null) {
+            iconView.setImageDrawable(appIcon);
+        } else {
+            iconView.setImageResource(android.R.drawable.sym_def_app_icon);
+            loadIconWhenNeeded(row, iconView);
+        }
         appNameView.setText(row.appName);
         packageView.setText(row.packageInfo.packageName);
 
@@ -117,18 +143,40 @@ class AppListAdapter extends ArrayAdapter<AppRow> {
             return true;
         });
 
-        if (convertView == null) {
-            view.setAlpha(0f);
-            view.setTranslationY(14f);
-            view.animate()
-                    .alpha(1f)
-                    .translationY(0f)
-                    .setStartDelay(Math.min(position * 12L, 120L))
-                    .setDuration(220)
-                    .start();
+        return view;
+    }
+
+    private void loadIconWhenNeeded(AppRow row, ImageView iconView) {
+        String packageName = row.packageInfo.packageName;
+        if (!pendingIcons.add(packageName)) {
+            return;
         }
 
-        return view;
+        iconLoader.execute(() -> {
+            Drawable appIcon = null;
+            try {
+                if (row.packageInfo.applicationInfo != null) {
+                    appIcon = row.packageInfo.applicationInfo.loadIcon(packageManager);
+                }
+            } catch (RuntimeException ignored) {
+                // The package may have been removed while its icon was loading.
+            }
+            pendingIcons.remove(packageName);
+            if (appIcon == null || closed) {
+                return;
+            }
+
+            row.appIcon = appIcon;
+            Drawable loadedIcon = appIcon;
+            mainHandler.post(() -> {
+                Object currentTag = iconView.getTag();
+                if (currentTag instanceof AppRow
+                        && packageName.equals(((AppRow) currentTag).packageInfo.packageName)) {
+                    ((AppRow) currentTag).appIcon = loadedIcon;
+                    iconView.setImageDrawable(loadedIcon);
+                }
+            });
+        });
     }
 
     private void animateActionsToggle(View actionsContainer, ImageButton expandButton, boolean expand) {

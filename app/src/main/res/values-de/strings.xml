@@ -11,6 +11,9 @@
     <string name="header_subtitle">Übersicht installierter Apps</string>
     <string name="header_subtitle_state">%1$d von %2$d Apps angezeigt - %3$s</string>
     <string name="no_apps_found">Keine Apps gefunden</string>
+    <string name="splash_subtitle">Durchsuchen · prüfen · sichern</string>
+    <string name="loading_apps">Apps werden geladen…</string>
+    <string name="apps_load_failed">Apps konnten nicht geladen werden</string>
     <string name="filter_all">Alle</string>
     <string name="filter_user">Benutzer</string>
     <string name="filter_system">System</string>
