@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,6 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     private AppOperationsManager appOperationsManager;
     private PackageChangeWatcher packageChangeWatcher;
     private AppListAdapter appAdapter;
+    private ActivityResultLauncher<Intent> installBackupPicker;
 
     private TextInputEditText searchInput;
     private AutoCompleteTextView filterDropdown;
@@ -57,6 +63,25 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        installBackupPicker = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        if (uri != null) {
+                            try {
+                                getContentResolver().takePersistableUriPermission(
+                                        uri,
+                                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                );
+                            } catch (SecurityException ignored) {
+                                // The picker may provide a temporary read grant instead.
+                            }
+                            ApkBackupInstaller.install(this, uri);
+                        }
+                    }
+                }
+        );
         setContentView(R.layout.activity_main);
 
         appDialogManager = new AppDialogManager(this, appLocaleManager);
@@ -73,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         filterDropdown = findViewById(R.id.filter_dropdown);
         sortDropdown = findViewById(R.id.sort_dropdown);
         TextView appInfoButton = findViewById(R.id.btn_app_info);
+        MaterialButton installBackupButton = findViewById(R.id.btn_install_backup);
         batchActionsCard = findViewById(R.id.batch_actions_card);
         batchSelectionCount = findViewById(R.id.batch_selection_count);
         MaterialButton batchSelectAllButton = findViewById(R.id.batch_select_all);
@@ -88,8 +114,26 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
         setupSortDropdown();
         setupBatchActions(batchSelectAllButton);
         appInfoButton.setOnClickListener(v -> showAppInfoDialog());
+        installBackupButton.setOnClickListener(v -> openInstallBackupPicker());
 
         promptForBackupStoragePermissionIfNeeded();
+    }
+
+    private void openInstallBackupPicker() {
+        if (!appOperationsManager.ensureInstallPermission()) {
+            return;
+        }
+        Intent pickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        pickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        pickerIntent.setType("*/*");
+        pickerIntent.putExtra(
+                DocumentsContract.EXTRA_INITIAL_URI,
+                DocumentsContract.buildDocumentUri(
+                        "com.android.externalstorage.documents",
+                        "primary:App_Backups"
+                )
+        );
+        installBackupPicker.launch(pickerIntent);
     }
 
     @Override
@@ -432,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements AppListAdapter.Li
     }
 
     private void showAppInfoDialog() {
-        String versionName = "1.0";
+        String versionName = String.valueOf(R.string.app_info_version);
         try {
             PackageInfo info;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

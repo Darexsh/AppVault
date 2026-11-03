@@ -143,6 +143,25 @@ class AppOperationsManager {
         );
     }
 
+    boolean ensureInstallPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                || activity.getPackageManager().canRequestPackageInstalls()) {
+            return true;
+        }
+
+        Toast.makeText(activity, R.string.install_permission_required, Toast.LENGTH_LONG).show();
+        Intent settingsIntent = new Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                Uri.parse("package:" + activity.getPackageName())
+        );
+        try {
+            activity.startActivity(settingsIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(activity, R.string.install_settings_unavailable, Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+
     private boolean ensureBackupStorageAccess() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             return true;

@@ -186,6 +186,13 @@
     <string name="backup_saved">Backup saved: %1$s</string>
     <string name="backup_saved_split">Split APK backup saved as one .apks file: %1$s</string>
     <string name="batch_backup_split_hint">%1$d selected app backups were saved as single .apks files.</string>
+    <string name="install_backup">Install backup apps</string>
+    <string name="install_preparing">Preparing installation…</string>
+    <string name="install_success">Installation complete</string>
+    <string name="install_failed">Could not install this APK backup</string>
+    <string name="install_invalid_file">Choose an .apk or AppVault .apks backup</string>
+    <string name="install_permission_required">Allow AppVault to install apps in settings, then tap Install backup again.</string>
+    <string name="install_settings_unavailable">Could not open the install permission settings.</string>
     <string name="backup_permission_required">Please allow file access to save backups.</string>
     <string name="backup_confirm_title">Create backup</string>
     <string name="backup_confirm_message">Do you want to backup %1$s?</string>

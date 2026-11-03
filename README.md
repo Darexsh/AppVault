@@ -8,7 +8,7 @@
 **An Android app for inspecting and managing installed applications**  
 📦🔎⚙️💾🧭
 
-![Projekt-Status](https://img.shields.io/badge/Status-Aktiv-brightgreen) ![License](https://img.shields.io/badge/License-NonCommercial-blue) ![Version](https://img.shields.io/badge/Version-1.0-orange)
+![Projekt-Status](https://img.shields.io/badge/Status-Aktiv-brightgreen) ![License](https://img.shields.io/badge/License-NonCommercial-blue) ![Version](https://img.shields.io/badge/Version-1.0.1-orange)
 
 [![Telegram Bot](https://img.shields.io/badge/Telegram-Bot-2AABEE?logo=telegram&logoColor=white)](https://t.me/darexsh_bot) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-yellow?logo=buy-me-a-coffee)](https://buymeacoffee.com/darexsh)  
 <sub>Get release updates on Telegram.<br>If you want to support more apps, you can leave a small donation for a coffee.</sub>
@@ -23,14 +23,14 @@
 
 | Name | GitHub | Role | Contact | Contributions |
 | --- | --- | --- | --- | --- |
-| **[Darexsh by Daniel Sichler](https://github.com/Darexsh)** | [Link](https://github.com/Darexsh?tab=repositories) | Android App Development 📱🛠️, UI/UX Design 🎨 | 📧 [E-Mail](mailto:sichler.daniel@gmail.com) | Concept, Feature Implementation, App Inventory & Detail Logic, Backup/Uninstall Flows, UI Design |
+| **[Darexsh by Daniel Sichler](https://github.com/Darexsh)** | [Link](https://github.com/Darexsh?tab=repositories) | Android App Development 📱🛠️, UI/UX Design 🎨 | 📧 [E-Mail](mailto:sichler.daniel@gmail.com) | Concept, Feature Implementation, App Inventory & Detail Logic, Backup/Install/Uninstall Flows, UI Design |
 
 * * *
 
 🚀 About the Project
 ==============
 
-**AppVault** is an Android application designed to help you inspect installed apps on your device. It provides a searchable app inventory, user/system filtering, sorting options, package-level details, backup actions, and quick access to app settings.
+**AppVault** is an Android application for inspecting, backing up, and managing installed apps. It provides a searchable app inventory, user/system filtering, sorting, package-level details, APK backup and installation, and quick access to app settings.
 
 * * *
 
@@ -41,11 +41,17 @@
 
 * 📋 **App Inventory**: Clean list with app icon, app name, and package name.
 
+* ✨ **Animated Splash and UI**: A 2.4-second branded splash screen, with motion in the app catalog, backup card, and storage tray.
+
+* ⚡ **Responsive Loading**: Installed apps are scanned in the background, icons load as rows become visible, and a loading message appears while the catalog is prepared.
+
 * 🧾 **App Details Screen**: Open detailed metadata including version, version code, target SDK, min SDK, first install date, **app size**, data directory, source directory, and requested app permissions.
 
 * ⚙️ **Quick App Actions**: Open system app settings, create APK backup, or uninstall from each app row.
 
-* 💾 **APK Backup**: Save APK files into `/storage/emulated/0/App_Backups` (visible at root storage level like DCIM/Download).
+* 💾 **APK Backup**: Save backups in `/storage/emulated/0/App_Backups`. Regular apps are saved as `.apk` files; split apps are saved as one `.apks` archive containing the base APK and its splits.
+
+* 📲 **Install Backups**: Use **Install backup apps** below the filter and sort controls to choose an `.apk` or AppVault `.apks` backup. The picker opens in `App_Backups`, and Android handles the install confirmation.
 
 * ✅ **Backup Confirm Dialog**: Friendly confirmation dialog before each backup operation.
 
@@ -55,7 +61,7 @@
 
 * 🔄 **Live App List Refresh**: List updates automatically after installs, updates, and removals.
 
-* 🔐 **Permissions Viewer**: Permissions are shown in a readable format with clear status labels (**Allowed** / **Not allowed**).
+* 🔐 **Permissions Viewer**: Shows requested permissions and their status with human-readable English and German labels (**Allowed** / **Not allowed**).
 
 * 🌐 **Language Switcher**: Change app language from the App Info dialog using **System default**, **English**, or **Deutsch**.
 
@@ -134,7 +140,17 @@
 
     * Use **App settings**, **Backup**, or **Uninstall**.
 
-4. **Selection Mode**:
+4. **Install a Backup**:
+
+    * Tap **Install backup apps** below the filter and sort controls.
+
+    * Choose an `.apk` file or an AppVault `.apks` archive from `App_Backups`.
+
+    * If prompted, allow AppVault to install apps in Android settings, then tap the button again.
+
+    * Confirm the installation in Android's package installer.
+
+5. **Selection Mode**:
 
     * Long-press an app to enter selection mode.
 
@@ -142,11 +158,11 @@
 
     * Review selected app names in the confirmation dialog before continuing.
 
-5. **Grant File Access for Backups**:
+6. **Grant File Access for Backups**:
 
     * If needed, accept the in-app prompt and allow file access in Android settings.
 
-6. **Change App Language**:
+7. **Change App Language**:
 
     * Open the App Info dialog (`i` button in header).
 
@@ -162,6 +178,8 @@
 
 * 💾 **File Access** (`MANAGE_EXTERNAL_STORAGE` on Android 11+): Required to save APK backups into `App_Backups` root folder.
 
+* 📲 **Install Packages** (`REQUEST_INSTALL_PACKAGES`): Lets AppVault request installs through Android's package installer. The user must allow AppVault as an install source and confirm each installation.
+
 * 🗑️ **Delete Packages** (`REQUEST_DELETE_PACKAGES`): Required to trigger uninstall requests.
 
 
@@ -172,19 +190,21 @@
 
 * 📦 Built with **Java** and Android SDK components.
 
+* ✨ The home screen is preceded by a 2.4-second animated AppVault splash screen.
+
 * 📱 Uses `PackageManager` to enumerate installed apps and collect metadata.
 
 * 🔄 Uses `BroadcastReceiver` package events (`ADDED/REMOVED/CHANGED/REPLACED`) for live list refresh.
 
-* 💾 APK backup copies from installed APK source files to external storage (`App_Backups`), including split APK parts when available.
+* 💾 APK backups are copied from installed APK source files into `App_Backups`; split apps are packed into one `.apks` ZIP archive.
 
-* ⚠️ Split-APK restore note: split backups may require split-aware installation; tapping a single APK file in a file manager may not install split apps.
+* 📲 Backup installation streams `.apk` files or the base and split APKs from an AppVault `.apks` archive into an Android `PackageInstaller` session. Android shows its own confirmation screen; split APKs are not merged into a universal APK.
 
 * 🧭 Navigation includes a dedicated app-details activity.
 
 * 📏 Details page app size is shown as installed APK footprint (base + split APK files when present).
 
-* 🔐 Permission details are read from package metadata and displayed as friendly names with grant state.
+* 🔐 Permission details use curated human-readable English and German names for common Android permissions, along with the grant state.
 
 * 🌐 Language behavior: **System default** is the default mode. If the system language is not supported, the app falls back to English.
 

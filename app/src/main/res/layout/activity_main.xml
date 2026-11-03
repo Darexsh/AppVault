@@ -41,6 +41,7 @@
                     android:textSize="28sp"
                     android:textStyle="bold" />
 
+
                 <TextView
                     android:id="@+id/btn_app_info"
                     android:layout_width="32dp"
@@ -176,6 +177,26 @@
                             android:textSize="14sp" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_install_backup"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/install_backup"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:backgroundTint="#22FFFFFF"
+                    app:cornerRadius="16dp"
+                    app:icon="@android:drawable/ic_menu_upload"
+                    app:iconGravity="textStart"
+                    app:iconPadding="10dp"
+                    app:iconSize="18dp"
+                    app:iconTint="@android:color/white"
+                    app:strokeColor="#66FFFFFF"
+                    app:strokeWidth="1dp" />
             </LinearLayout>
 
         </LinearLayout>
