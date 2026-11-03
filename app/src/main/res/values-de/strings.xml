@@ -183,8 +183,8 @@
     <string name="storage_permission_later">Später</string>
     <string name="storage_permission_open_settings">Einstellungen öffnen</string>
     <string name="backup_saved">Backup gespeichert: %1$s</string>
-    <string name="backup_saved_split">Backup gespeichert für %1$s (%2$d APK-Dateien im App-Ordner).</string>
-    <string name="batch_backup_split_hint">%1$d ausgewählte App-Backups enthalten Split-APK-Dateien.</string>
+    <string name="backup_saved_split">Split-APK-Backup als einzelne .apks-Datei gespeichert: %1$s</string>
+    <string name="batch_backup_split_hint">%1$d ausgewählte App-Backups wurden jeweils als einzelne .apks-Datei gespeichert.</string>
     <string name="backup_permission_required">Bitte Dateizugriff erlauben, um Backups zu speichern.</string>
     <string name="backup_confirm_title">Backup erstellen</string>
     <string name="backup_confirm_message">Möchtest du %1$s sichern?</string>

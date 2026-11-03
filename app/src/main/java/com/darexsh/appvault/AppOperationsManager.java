@@ -84,7 +84,7 @@ class AppOperationsManager {
         if (backupResult.containsSplitApks) {
             Toast.makeText(
                     activity,
-                    activity.getString(R.string.backup_saved_split, row.appName, backupResult.savedFiles.size()),
+                    activity.getString(R.string.backup_saved_split, backupResult.savedFiles.get(0).getName()),
                     Toast.LENGTH_LONG
             ).show();
         } else {
